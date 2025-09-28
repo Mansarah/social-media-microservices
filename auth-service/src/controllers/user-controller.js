@@ -65,3 +65,6 @@ const registerUser = async (req,res)=>{
 
 
 // logout 
+
+module.exports={registerUser}
+
