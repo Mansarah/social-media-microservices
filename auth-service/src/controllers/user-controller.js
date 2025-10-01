@@ -22,10 +22,10 @@ const registerUser = async (req,res)=>{
         }
 
         const {email,password,username} = req.body
+
         let user = await User.findOne({$or : [{email},{username}]})
-        
         if(user){
-                logger.warn('User Already exits',error.details[0].message)
+                logger.warn('User Already exits')
                   return res.status(400).json({
                 success:false,
                 message: 'User Already exits'
