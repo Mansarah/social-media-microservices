@@ -16,8 +16,8 @@ const redisClient = new Redis(process.env.REDIS_URL)
 
 
 // middleware 
-app.use('helmet')
-app.use('cors')
+app.use(helmet())   
+app.use(cors())
 app.use(express.json())
 
 
