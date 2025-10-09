@@ -20,7 +20,6 @@ app.use(helmet())
 app.use(cors())
 app.use(express.json())
 
-
 const globalLimiter = rateLimit({
     windowMs:15*60*1000, 
     max:100, 
@@ -38,8 +37,8 @@ const globalLimiter = rateLimit({
     })
 })
 
-app.use(globalLimiter)
 
+app.use(globalLimiter)
 
 // logging middleware 
 app.use((req,res,next)=>{
@@ -47,7 +46,6 @@ app.use((req,res,next)=>{
     logger.info(`Request body, ${req.body}`)
     next()
 })
-
 
 // api-gateway  -  /v1/auth/register                   ->3000
 // auth-service -> /api/auth/register ->3001
@@ -81,11 +79,6 @@ app.use('/v1/auth',proxy(process.env.AUTH_SERVICE_URL,{
         return proxyResData
     }
 }))
-
-
-
-
-
 //global handler
 app.use(errorHandler)
 
@@ -94,3 +87,5 @@ app.listen(PORT,()=>{
     logger.info(`Auth Service is running on port ${process.env.AUTH_SERVICE_URL}`)
     logger.info(`Redis Url ${process.env.REDIS_URL}`)
 })
+
+
