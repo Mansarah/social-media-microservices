@@ -8,7 +8,6 @@ const { validateRegistration, validateLogin } = require('../utils/validation')
 
 
 // user registration
-
 const registerUser = async (req,res)=>{
     logger.info('Registration endpoint hit...')
     try {
@@ -157,12 +156,6 @@ const refreshTokenUser = async (req,res)=>{
         accessToken : newAccessToken,
         refreshToken: newRefreshToken
       })
-
-
-
-
-
-
 
       } catch (error) {
          logger.error("Refresh token error occured", error);
