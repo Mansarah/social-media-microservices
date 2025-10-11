@@ -1,6 +1,6 @@
 const express = require('express')
 const { authenticateRequest } = require('../middleware/authMiddleware')
-const { createPost, getAllPosts } = require('../controllers/post-controller')
+const { createPost, getAllPosts, getPost, deletePost } = require('../controllers/post-controller')
 
 const router = express.Router()
 
@@ -10,6 +10,8 @@ router.use(authenticateRequest)
 
 router.post('/create-post',createPost)
 router.get('/all-post',getAllPosts)
+router.get('/get-post/:id',getPost)
+router.delete('/delete-post/:id',deletePost)
 
 
 
