@@ -39,11 +39,11 @@ app.use((req,res,next)=>{
 
 const sensitiveEndpointsLimiterForPost = rateLimit({
     windowMs:15*60*1000, 
-    max:10, 
+    max:1000, 
     standardHeaders:true, 
     legacyHeaders:false, 
     handler:(req,res)=>{  
-        logger.warn(`Sensitive endpoint rate limit exceeded for IP: ${req.ip}`)
+        logger.warn(`Sensitive endpoint rate limit exceeded(create-post) for IP: ${req.ip}`)
          res.status(429).json({
             success:false,
             message:'Too many Requests'
@@ -59,7 +59,7 @@ const sensitiveEndpointsLimiterForGetPost = rateLimit({
     standardHeaders:true, 
     legacyHeaders:false, 
     handler:(req,res)=>{  
-        logger.warn(`Sensitive endpoint rate limit exceeded for IP: ${req.ip}`)
+        logger.warn(`Sensitive endpoint rate limit exceeded(get-post) for IP: ${req.ip}`)
          res.status(429).json({
             success:false,
             message:'Too many Requests'
@@ -73,17 +73,17 @@ const sensitiveEndpointsLimiterForGetPost = rateLimit({
 
 // routes --> pass your redis client to routes 
 
-app.use('/api/post/create-post',sensitiveEndpointsLimiterForPost,(req,res,next)=>{
+app.use('/api/posts/create-post',sensitiveEndpointsLimiterForPost,(req,res,next)=>{
     req.redisClient = redisClient
     next()
 })
 
-app.use('/api/post/get-all-post',(req,res,next)=>{
+app.use('/api/posts/get-all-post',(req,res,next)=>{
     req.redisClient = redisClient
     next()
 },sensitiveEndpointsLimiterForGetPost)
 
-app.use('/api/post',(req,res,next)=>{
+app.use('/api/posts',(req,res,next)=>{
     req.redisClient = redisClient
     next()
 },postRoutes)
