@@ -8,6 +8,7 @@ const {RedisStore}= require('rate-limit-redis')
 const logger = require('./utils/logger')
 const proxy = require('express-http-proxy')
 const errorHandler= require('./middleware/errorHandler')
+const { validateToken } = require('./middleware/authMiddleware')
 
 const app = express()
 const PORT  = process.env.PORT || 3000
@@ -79,12 +80,30 @@ app.use('/v1/auth',proxy(process.env.AUTH_SERVICE_URL,{
         return proxyResData
     }
 }))
+
+
+// setting up proxy for Post service
+app.use('/v1/posts',validateToken,proxy(process.env.POST_SERVICE_URL,{
+        ...proxyOptions,
+         proxyReqOptDecorator:(proxyReqOpts,srcReq)=>{
+        proxyReqOpts.headers["content-type"] = "application/json"
+      proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
+        return proxyReqOpts
+    },
+    userResDecorator:(proxyRes,proxyResData,userReq,userRes)=>{
+        logger.info(`Response received from post service: ${proxyRes.statusCode}`)
+        return proxyResData
+    }
+}))
+
+
 //global handler
 app.use(errorHandler)
 
 app.listen(PORT,()=>{
     logger.info(`API Gateway is running on port ${PORT}`)
     logger.info(`Auth Service is running on port ${process.env.AUTH_SERVICE_URL}`)
+    logger.info(`Post Service is running on port ${process.env.POST_SERVICE_URL}`)
     logger.info(`Redis Url ${process.env.REDIS_URL}`)
 })
 
