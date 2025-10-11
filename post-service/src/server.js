@@ -8,6 +8,7 @@ const errorHandler = require('./middleware/errorHandler')
 const {RedisStore}= require('rate-limit-redis')
 const logger = require('./utils/logger')
 const connectToPostDB = require('../db/db')
+const rateLimit = require('express-rate-limit')
 
 
 
@@ -72,10 +73,10 @@ const sensitiveEndpointsLimiterForGetPost = rateLimit({
 
 // routes --> pass your redis client to routes 
 
-app.use('/api/post/create-post',(req,res,next)=>{
+app.use('/api/post/create-post',sensitiveEndpointsLimiterForPost,(req,res,next)=>{
     req.redisClient = redisClient
     next()
-},sensitiveEndpointsLimiterForPost)
+})
 
 app.use('/api/post/get-all-post',(req,res,next)=>{
     req.redisClient = redisClient
@@ -88,11 +89,17 @@ app.use('/api/post',(req,res,next)=>{
 },postRoutes)
 
 
+app.use(errorHandler);
 
 
+
+app.listen(PORT,()=>{
+    logger.info(`Post service running on port ${PORT}`)
+})
 
 //unhandled promise rejection
 
 process.on("unhandledRejection",(reason,promise)=>{
     logger.error("Unhandled Rejection at",promise,"reason",reason)
 })
+

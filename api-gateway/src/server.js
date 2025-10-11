@@ -79,12 +79,19 @@ app.use('/v1/auth',proxy(process.env.AUTH_SERVICE_URL,{
         return proxyResData
     }
 }))
+
+
+// setting up proxy for Post service
+
+
+
 //global handler
 app.use(errorHandler)
 
 app.listen(PORT,()=>{
     logger.info(`API Gateway is running on port ${PORT}`)
     logger.info(`Auth Service is running on port ${process.env.AUTH_SERVICE_URL}`)
+    logger.info(`Post Service is running on port ${process.env.POST_SERVICE_URL}`)
     logger.info(`Redis Url ${process.env.REDIS_URL}`)
 })
 
