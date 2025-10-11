@@ -78,7 +78,7 @@ app.use('/api/posts/create-post',sensitiveEndpointsLimiterForPost,(req,res,next)
     next()
 })
 
-app.use('/api/posts/get-all-post',(req,res,next)=>{
+app.use('/api/posts/all-post',(req,res,next)=>{
     req.redisClient = redisClient
     next()
 },sensitiveEndpointsLimiterForGetPost)

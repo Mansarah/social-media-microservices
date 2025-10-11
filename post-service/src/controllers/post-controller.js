@@ -41,11 +41,43 @@ const createPost = async(req,res)=>{
 }
 
 
-//get all post 
+//get all post -- redis caching and implement invalidate cahcing(for create and delete)
 
 const getAllPosts = async(req,res)=>{
     try {
+        const page = parseInt(req.query.page) || 1
+        const limit = parseInt(req.query.limit) || 10
+        const startIndex = (page-1)*limit 
+
+
+        //cahce key 
+        const cacheKey = `posts:${page}:${limit}`
+        const cachedPost = await req.redisClient.get(cacheKey)
+
+        if(cachedPost){
+            return res.json(JSON.parse(cachedPost))
+        }
+
         
+
+        const posts = await Post.find({})
+      .sort({ createdAt: -1 })
+      .skip(startIndex)
+      .limit(limit);
+
+        const totalNoPost = await Post.countDocuments()
+
+        const result ={
+            posts,
+            currentpage:page,
+            totalPage:Math.ceil(totalNoPost/limit),
+            totalPost:totalNoPost
+        }
+
+        //save your post in redis cache(first save your post in cache)
+        await req.redisClient.setex(cacheKey,300,JSON.stringify(result))
+
+        res.json(result)
     } catch (error) {
         logger.error('Error fetching post',error)
         res.status(500).json({
@@ -91,5 +123,6 @@ const deletePost = async(req,res)=>{
 
 
 module.exports={
-    createPost
+    createPost,
+    getAllPosts
 }
