@@ -10,6 +10,7 @@ const rateLimit = require('express-rate-limit')
 const connectToSearchDB = require('./db/db')
 const { connectToRabbitMQ } = require('./utils/rabbitmq')
 const searchRoutes= require('./routes/search-routes')
+const { handlePostCreated } = require('./eventHanlder/search-event-handler')
 
 
 
@@ -47,7 +48,7 @@ async function startServer() {
     await connectToRabbitMQ();
 
     //consume the events / subscribe to the events
-    await consumeEvent("post.created");
+    await consumeEvent("post.created",handlePostCreated);
     await consumeEvent("post.deleted");
 
     app.listen(PORT, () => {
