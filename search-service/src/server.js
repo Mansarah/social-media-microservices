@@ -9,7 +9,7 @@ const logger = require('./utils/logger')
 const rateLimit = require('express-rate-limit')
 const connectToSearchDB = require('./db/db')
 const { connectToRabbitMQ } = require('./utils/rabbitmq')
-
+const searchRoutes= require('./routes/search-routes')
 
 
 
@@ -35,6 +35,8 @@ app.use((req,res,next)=>{
  
 
 //route
+app.use('/api/search',searchRoutes)
+
 
 app.use(errorHandler);
 
