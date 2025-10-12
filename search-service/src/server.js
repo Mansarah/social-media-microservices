@@ -8,9 +8,10 @@ const {RedisStore}= require('rate-limit-redis')
 const logger = require('./utils/logger')
 const rateLimit = require('express-rate-limit')
 const connectToSearchDB = require('./db/db')
-const { connectToRabbitMQ } = require('./utils/rabbitmq')
+const { connectToRabbitMQ, consumeEvent } = require('./utils/rabbitmq')
 const searchRoutes= require('./routes/search-routes')
-const { handlePostCreated } = require('./eventHanlder/search-event-handler')
+const { handlePostCreated, handlePostDeleted } = require('./eventHanlder/search-event-handler')
+
 
 
 
@@ -49,7 +50,7 @@ async function startServer() {
 
     //consume the events / subscribe to the events
     await consumeEvent("post.created",handlePostCreated);
-    await consumeEvent("post.deleted");
+    await consumeEvent("post.deleted",handlePostDeleted);
 
     app.listen(PORT, () => {
       logger.info(`Search service is running on port: ${PORT}`);
@@ -59,5 +60,6 @@ async function startServer() {
     process.exit(1);
   }
 }
+
 
 startServer();

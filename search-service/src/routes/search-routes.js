@@ -8,8 +8,8 @@ const { authenticateRequest } = require('../../../post-service/src/middleware/au
 const router = express.Router()
 
 
-app.use(authenticateRequest)
-app.use('/search-post',searchPostController)
+router.use(authenticateRequest)
+router.get('/search-post',searchPostController)
 
 
 
