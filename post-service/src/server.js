@@ -9,6 +9,7 @@ const {RedisStore}= require('rate-limit-redis')
 const logger = require('./utils/logger')
 const connectToPostDB = require('../db/db')
 const rateLimit = require('express-rate-limit')
+const { connectToRabbitMQ } = require('./utils/rabbitmq')
 
 
 
@@ -92,10 +93,23 @@ app.use('/api/posts',(req,res,next)=>{
 app.use(errorHandler);
 
 
-
-app.listen(PORT,()=>{
+async function startServer() {
+    try{
+        await connectToRabbitMQ()
+        app.listen(PORT,()=>{
     logger.info(`Post service running on port ${PORT}`)
 })
+    }catch(error){
+        logger.error('Failed to connect to server')
+        process.exit()
+    }
+    
+}
+
+startServer()
+
+
+
 
 //unhandled promise rejection
 
