@@ -9,7 +9,7 @@ const logger = require("../utils/logger")
 const uploadMedia = async (req,res)=>{
     logger.info("upload media endpoint hit")
     try {
-        console.log('req.file.file',req.file)
+        // console.log('req.file.file',req.file)
         if(!req.file){
             logger.error("No file found. Please add a file and try again!")
             return res.status(400).json({
