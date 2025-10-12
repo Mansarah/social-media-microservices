@@ -96,6 +96,19 @@ app.use('/v1/posts',validateToken,proxy(process.env.POST_SERVICE_URL,{
     }
 }))
 
+// setting up proxy for Media service
+app.use('/v1/media',validateToken,proxy(process.env.MEDIA_SERVICE_URL,{
+        ...proxyOptions,
+         proxyReqOptDecorator:(proxyReqOpts,srcReq)=>{
+        proxyReqOpts.headers["content-type"] = "application/json"
+      proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
+        return proxyReqOpts
+    },
+    userResDecorator:(proxyRes,proxyResData,userReq,userRes)=>{
+        logger.info(`Response received from post service: ${proxyRes.statusCode}`)
+        return proxyResData
+    }
+}))
 
 //global handler
 app.use(errorHandler)
