@@ -9,6 +9,8 @@ const {RedisStore}= require('rate-limit-redis')
 const Redis = require('ioredis')
 const logger = require('./utils/logger')
 const mediaRoute = require('./routes/media-routes')
+const { connectToRabbitMQ, consumeEvent } = require('./utils/rabbitmq')
+const { handlePostDeleted } = require('./eventHanlder/media-event-hanlder')
 
 
 
@@ -60,11 +62,23 @@ app.use('/api/media',mediaRoute)
 
 app.use(errorHandler);
 
-
-
-app.listen(PORT,()=>{
+async function startServer() {
+    try{
+        await connectToRabbitMQ()
+        await consumeEvent('post.deleted',handlePostDeleted)
+        app.listen(PORT,()=>{
     logger.info(`Media service running on port ${PORT}`)
 })
+    }catch(error){
+        logger.error('Failed to connect to server')
+        process.exit()
+    }
+    
+}
+
+startServer()
+
+
 
 //unhandled promise rejection
 

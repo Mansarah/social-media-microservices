@@ -1,11 +1,11 @@
 const mongoose= require('mongoose')
-const logger = require('../src/utils/logger')
+const logger = require('../utils/logger')
 
 
 
-const connectToPostDB = async ()=>{
+const connectToSearchDB = async ()=>{
     try {
-        await mongoose.connect(process.env.MONGODB_URI_POST)
+        await mongoose.connect(process.env.MONGODB_URI_SEARCH)
         logger.info("Connected to PostDB")
     } catch (error) {
         logger('Error while connection PostDb',error)
@@ -14,4 +14,4 @@ const connectToPostDB = async ()=>{
     }
 }
 
-module.exports = connectToPostDB
+module.exports = connectToSearchDB
