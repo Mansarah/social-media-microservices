@@ -1,6 +1,7 @@
 const express = require('express')
 const { searchPostController } = require('../controllers/search-controller')
-const { authenticateRequest } = require('../../../post-service/src/middleware/authMiddleware')
+const { authenticateRequest } = require('../middleware/authMiddleware')
+
 
 
 

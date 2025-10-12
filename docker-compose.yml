@@ -47,10 +47,10 @@ services:
     build: ./search-service
     env_file: ./search-service/.env
     depends_on:
-      - redis
+      # - redis
       - rabbitmq
     environment:
-      - REDIS_URL=redis://redis:6379
+      # - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://rabbitmq:5672
 
   redis:
