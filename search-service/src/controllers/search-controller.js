@@ -2,7 +2,7 @@ const logger = require("../utils/logger")
 const Search = require('../models/Search')
 
 
-
+//http://localhost:3000/v1/search/search-post?query='testing'
 const searchPostController = async (req,res)=>{
     logger.info('Search endpoint hit...')
     try {
