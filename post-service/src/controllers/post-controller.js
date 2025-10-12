@@ -1,5 +1,6 @@
 const Post = require("../models/Post")
 const logger = require("../utils/logger");
+const { publishEvent } = require("../utils/rabbitmq");
 const { validateCreatePost } = require("../utils/validation");
 
 // Cache Invalidation =creating or deleting or updating cached data when the database changes.
@@ -161,6 +162,13 @@ const deletePost = async(req,res)=>{
                 message:'POST NOT FOUNd'
             })
         }
+        //publish post delete method 
+
+        await publishEvent('post.deleted',{
+            postId:post._id.toString(),
+            userId: req.user.userId,
+            mediaIds:post.mediaIds
+        })
 
         await invalidatePostCache(req,req.params.id)
         res.json({
