@@ -9,8 +9,8 @@ const logger = require("../utils/logger")
 const uploadMedia = async (req,res)=>{
     logger.info("upload media endpoint hit")
     try {
-
-        if(!req){
+        console.log('req.file.file',req.file)
+        if(!req.file){
             logger.error("No file found. Please add a file and try again!")
             return res.status(400).json({
                 success:false,
@@ -18,10 +18,10 @@ const uploadMedia = async (req,res)=>{
             })
         }
 
-        const {originalName, mimeType , buffer} = req.body
+        const {originalname, mimetype , buffer} = req.file
         const userId = req.user.userId
 
-        logger.info(`File details name=${originalName},type=${mimeType}`)
+        logger.info(`File details name=${originalname},type=${mimetype}`)
         logger.info('Uploading to cloudniary starting...')
 
 
@@ -29,10 +29,11 @@ const uploadMedia = async (req,res)=>{
         logger.info(`Cloduinary upload succesfully. Public Id
             : - ${cloudinaryUploadResult.public_id}`)
 
+
             const newlyCreatedMedia = new Media({
                 publicId:cloudinaryUploadResult.public_id,
-                originalName:originalName,
-                mimeType:mimeType,
+                originalName:originalname,
+                mimeType:mimetype,
                 url:cloudinaryUploadResult.secure_url,
                 userId
             })
